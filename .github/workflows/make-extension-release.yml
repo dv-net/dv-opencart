@@ -1,0 +1,27 @@
+name: Create OpenCart Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create release zip
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          zip -r dv-opencart-${TAG_NAME}.ocmod.zip upload/
+
+      - name: Create Release and Upload Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dv-opencart-*.ocmod.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
